@@ -1,62 +1,55 @@
-"""
-Concerned with storing and retrieving books from a json file.
-Format of the json file:
-
- [
-    {
-      "name": "The Lord of The Rings",
-      "author": "J.R.R Tolkiem",
-      "read": False
-    },
-    {
-      "name": "The Hobbit",
-      "author": "J.R.R Tolkiem",
-      "read": True
-    },
-    {
-      "name": "1984",
-      "author": "George Orwell",
-      "read": False
-    }
-]
+import sqlite3
 
 """
-import json
+Concerned with storing and retrieving books from a database.
+"""
 
+def create_book_table():
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
 
-def create_book_file():
-    with open('books.json', 'w') as file:
-        json.dump([], file)
+    cursor.execute('CREATE TABLE IF NOT EXISTS books(name text primary key, author text, read integer)')
+
+    connection.commit()
+    connection.close()
 
 
 def add_book(name, author):
-    books = get_all_books()
-    books.append({"name": name, "author": author, "read": False})
-    _save_all_books(books)
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('INSERT INTO books VALUES(?, ?, 0)', (name, author))
+    connection.commit()
+    connection.close()
 
 
 def get_all_books():
-    with open('books.json', 'r') as file:
-        return json.load(file)
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM books')
 
+    books = [{'name': row[0], 'author': row[1], 'read': row[2]} for row in cursor.fetchall()]
 
+    connection.close()
 
-def _save_all_books(books):
-    with open('books.json', 'w') as file:
-        json.dump(books, file)
+    return books
 
 
 def mark_book_as_read(name):
-    books = get_all_books()
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
 
-    for book in books:
-        if book["name"] == name:
-            book["read"] = True
+    cursor.execute('UPDATE books SET read = 1 WHERE name = ?', (name,))
 
-    _save_all_books(books)
+    connection.commit()
+    connection.close()
 
 
 def delete_book(name):
-    books = get_all_books()
-    books = [book for book in books if book["name"] != name]
-    _save_all_books(books)
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('DELETE FROM books WHERE name = ?', (name,))
+
+    connection.commit()
+    connection.close()
