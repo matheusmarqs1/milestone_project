@@ -1,26 +1,49 @@
 """
-Concerned with storing and retrieving books from a csv file.
-Format of the csv file:
+Concerned with storing and retrieving books from a json file.
+Format of the json file:
 
-name,author,read\n
+ [
+    {
+      "name": "The Lord of The Rings",
+      "author": "J.R.R Tolkiem",
+      "read": False
+    },
+    {
+      "name": "The Hobbit",
+      "author": "J.R.R Tolkiem",
+      "read": True
+    },
+    {
+      "name": "1984",
+      "author": "George Orwell",
+      "read": False
+    }
+]
+
 """
+import json
+
+
 def create_book_file():
-    with open('books.txt', 'w'):
-        pass
+    with open('books.json', 'w') as file:
+        json.dump([], file)
+
 
 def add_book(name, author):
-    with open('books.txt', 'a') as file:
-        file.write(f'{name},{author},0\n')
+    books = get_all_books()
+    books.append({"name": name, "author": author, "read": False})
+    _save_all_books(books)
+
 
 def get_all_books():
-    with open('books.txt', 'r') as file:
-        lines = [line.strip().split(',') for line in file.readlines()]
+    with open('books.json', 'r') as file:
+        return json.load(file)
 
-    books = [
-        {'name': line[0], 'author': line[1], 'read': line[2]}
-        for line in lines
-    ]
-    return books
+
+
+def _save_all_books(books):
+    with open('books.json', 'w') as file:
+        json.dump(books, file)
 
 
 def mark_book_as_read(name):
@@ -28,14 +51,9 @@ def mark_book_as_read(name):
 
     for book in books:
         if book["name"] == name:
-            book["read"] = '1'
+            book["read"] = True
 
     _save_all_books(books)
-
-def _save_all_books(books):
-    with open('books.txt', 'w') as file:
-        for book in books:
-            file.write(f'{book["name"]},{book["author"]},{book["read"]}\n')
 
 
 def delete_book(name):
