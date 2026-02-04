@@ -69,9 +69,11 @@ The core idea of this project is to demonstrate **progressive refactoring of the
 
 ## Design Decisions
 - **Separation of concerns**: user interface logic is separated from data handling logic
-- **Auto-save strategy**: data is saved after every add, update, or delete operation to prevent data loss
+- **Pluggable persistence layer**: the same application logic works with different storage backends
+- **Auto-save strategy**: data is persisted immediately after write operations
 - **Explicit load/save operations**: loading occurs at application start or when explicitly requested by the user
-- **Readable and maintainable code** over premature optimization
+- **Type hinting**: Python type annotations are used to improve readability, correctness, and editor support
+- **Context-managed database access**: a custom context manager ensures safe connection handling and transaction control
 
 ---
 
@@ -99,6 +101,7 @@ This project demonstrates:
 - Manual serialization and deserialization of data
 - SQL-based data manipulation using SQLite
 - Proper resource management with custom context managers
+- Practical use of Python type hints for function signatures and data structures
 - Incremental refactoring without breaking application logic
 
 ---
